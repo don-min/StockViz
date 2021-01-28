@@ -18,7 +18,7 @@ from sklearn.preprocessing import MinMaxScaler
 from .saved_model.my_model import *
 from .marketwatch_webscrape import scrape
 
-PATH = r"..\saved_model\my_model"
+PATH = "saved_model.pb"
 stock_model = load_model(PATH) # Load model
 
 
