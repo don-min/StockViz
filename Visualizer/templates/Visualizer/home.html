@@ -1,0 +1,76 @@
+{% extends "Visualizer/base.html"%}
+{% block content%}
+
+
+<section class="jumbotron text-center">
+   <div class="container">
+     <h1 class="jumbotron-heading">Welcome to StockVis</h1>
+     <p class="lead text-muted">
+       StockVis allows you to search for almost any stock given the approriate ticker.
+       Type the desired ticker into the search bar, and click search! You'll be able to
+       visualize the adjusting closing price and volume over the past 10 years, apply various indicators,
+       and even test a custom trained model RNN that predicts price trends! You can select and customize
+       the overall time horizon, and the time between two data points.
+     </p>
+     <div>
+       <p class="lead">Enter a ticker in the search bar to begin!</p>
+     </div>
+   </div>
+ </section>
+
+ <div class="album py-5 bg-light">
+   <div class="container">
+     <div class="text-center">
+       <p class="lead"><strong>Learn more about what's going on in today's market - check out some trending articles</strong></p>
+     </div>
+     <div class="row">
+       <div class="col-md-4">
+         <div class="card mb-4 box-shadow">
+           <img class="card-img-top" src="https://cdn.pixabay.com/photo/2016/11/23/14/37/blur-1853262_960_720.jpg" alt="Card image cap">
+           <div class="card-body">
+             <p class= "card-title"><strong>{{first_article.title}}</strong></p>
+             <p class="card-text">{{first_article.headline}}</p>
+             <div class="d-flex justify-content-between align-items-center">
+               <div class="btn-group">
+                 <a href={{first_article.link}} target="_blank" class="btn btn-info btn-sm btn-outline-info" role="button">View</a>
+               </div>
+               <small class="text-muted">7 mins</small>
+             </div>
+           </div>
+         </div>
+       </div>
+       <div class="col-md-4">
+         <div class="card mb-4 box-shadow">
+           <img class="card-img-top" src="https://cdn.pixabay.com/photo/2016/11/27/21/42/stock-1863880_960_720.jpg" alt="Card image cap">
+           <div class="card-body">
+             <p class= "card-title"><strong>{{second_article.title}}</strong></p>
+             <p class="card-text">{{second_article.headline}}</p>
+             <div class="d-flex justify-content-between align-items-center">
+               <div class="btn-group">
+                <a href={{second_article.link}} target="_blank" class="btn btn-info btn-sm btn-outline-info" role="button">View</a>
+               </div>
+               <small class="text-muted">5 mins</small>
+             </div>
+           </div>
+         </div>
+       </div>
+       <div class="col-md-4">
+         <div class="card mb-4 box-shadow">
+           <img class="card-img-top" src="https://cdn.pixabay.com/photo/2016/06/10/14/34/architecture-1448221_960_720.jpg" alt="Card image cap">
+           <div class="card-body">
+             <p class= "card-title"><strong>{{third_article.title}}</strong></p>
+             <p class="card-text">{{third_article.headline}}</p>
+             <div class="d-flex justify-content-between align-items-center">
+               <div class="btn-group">
+                 <a href={{third_article.link}} target="_blank" class="btn btn-info btn-sm btn-outline-info" role="button">View</a>
+               </div>
+               <small class="text-muted">6 mins</small>
+             </div>
+           </div>
+         </div>
+       </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

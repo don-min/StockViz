@@ -1,0 +1,9 @@
+Django
+numpy
+tensorflow
+sklearn
+yfinance
+bs4
+requests
+gunicorn
+gevent

@@ -1,0 +1,21 @@
+{% extends "Visualizer/base.html"%}
+{% block content%}
+
+
+{% if error %}
+<div class="text-center">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>'{{ticker}}' not found.</strong> {{error}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+{% endif %}
+<div class="text-center">
+  <h1>Two things could have happened...</h1>
+  <li>The ticker(s) you entered does not exist in the yfinance API directory</li>
+  <li>The interval you specified is most likely not available for the given tickers. Please change the <strong>period</strong> and/or <strong>interval</strong> settings</li>
+</div>
+
+{% endblock content %}

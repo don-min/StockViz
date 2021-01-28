@@ -1,0 +1,156 @@
+{% extends "Visualizer/base.html"%}
+{% block content%}
+
+  <canvas id="myChart"></canvas>
+      <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels:{{dates|safe}},
+            datasets: [{
+                label: '{{ticker}} Time Series',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: {{adjusted_close}},
+                fill: false
+
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+
+      </script>
+
+
+  <div class="row justify-content-center" id="bollinger-button">
+    <button onclick=bollinger_bands() class="btn btn-primary btn-sm">Calculate Bollinger Bands</button>
+  </div>
+
+  <canvas id="test"></canvas>
+        <script>
+          var ctx = document.getElementById('test').getContext('2d');
+          var chart = new Chart(ctx, {
+          // The type of chart we want to create
+          type: 'line',
+
+          // The data for our dataset
+          data: {
+              labels:{{dates|safe}},
+              datasets: [{
+                  label: '{{ticker}} Volume',
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data: {{volume}},
+                  fill: true
+              }]
+          },
+
+          // Configuration options go here
+          options: {}
+      });
+        </script>
+
+
+      <script>
+        function bollinger_bands() {
+          var moving_avg = [];
+          var std_dev_upper = [];
+          var std_dev_lower = [];
+          const len = {{length}};
+          const gap = 30;  // rolling average every 30 days
+
+          for (var i = 0; i < len; i++) {
+            avg = mean({{adjusted_close}}.slice(i,i + gap));
+            moving_avg.push(avg);
+            std_dev_upper.push(avg + 2*stdev({{adjusted_close}}.slice(i, i + gap)));
+            std_dev_lower.push(avg - 2*stdev({{adjusted_close}}.slice(i, i + gap)));
+          }
+
+
+          var bollingerCanvas = document.getElementById("myChart");
+
+          var upper_band = {   // create arrays for both upper and lower bands
+            label: "Upper Band",
+            data: std_dev_upper,
+            lineTension: 0.4,
+            fill: false,
+            pointRadius: 0.75,
+          borderColor: 'green'
+          };
+
+          var lower_band = {
+            label: 'Lower Band',
+            data: std_dev_lower,
+            lineTension: 0.4,
+            fill: false,
+            pointRadius: 0.75,
+            borderColor: 'blue'
+          };
+
+
+          var original_data = {   // original data array
+            label: '{{ticker}}',
+            data: {{adjusted_close}},
+            lineTension: 0.4,
+            fill: false,
+            borderColor: 'red'
+          };
+
+          var combinedData = {
+            labels: {{dates|safe}},
+            datasets: [lower_band, upper_band, original_data]
+          };
+
+          var lineChart = new Chart(bollingerCanvas, {
+            type: 'line',
+            data: combinedData,
+            options: {}
+          });
+
+          //const temp = myChart.getContext('2d');
+          //temp.clearRect(0,0,myChart.width, myChart.height);
+          console.log('hi');
+
+        }
+
+      </script>
+
+       <script>
+        function mean(arr) {
+          var sum = 0;
+          var len = arr.length;
+          for (var i = 0; i < arr.length; i++) {
+            sum += arr[i];
+          }
+          return sum/len
+        }
+        </script>
+
+
+        <script>
+         function stdev(arr) {
+           avg = mean(arr);
+           //variance
+           squaredDifferences = arr.map(function(val){
+
+             difference = val - avg;
+             square_diff = difference*difference;
+             return square_diff
+           });
+
+           variance = mean(squaredDifferences);
+           std = Math.sqrt(variance);
+
+           return std
+         }
+         </script>
+
+
+
+{% endblock content %}

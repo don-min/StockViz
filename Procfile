@@ -1,0 +1,1 @@
+web: gunicorn StockApp.wsgi --log-file -

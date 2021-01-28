@@ -1,0 +1,657 @@
+{% extends "Visualizer/base.html"%}
+{% block content%}
+
+
+
+  <canvas id="myChart"></canvas>
+      <script>
+
+        switch ({{Num_Tickers}}) {
+            case 1:
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels:{{dates|safe}},
+                    datasets: [{
+                        label: '{{ticker}} Time Series',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: {{adjusted_close}},
+                        fill: false
+
+                      }]
+                  },
+
+                // Configuration options go here
+                options: {}
+                });
+
+              break;
+            case 2:
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var first_stock = {
+                  label: "{{ticker}}",
+                  data: {{adjusted_close}},
+                  lineTension: 0.4,
+                  fill: false,
+                  pointRadius: 0.75,
+                  borderColor: 'blue'
+                };
+
+                var second_stock = {
+                  label: "{{ticker2}}",
+                  data:{{adjusted_close2}},
+                  lineTension: 0.4,
+                  fill: false,
+                  pointRadius: 0.75,
+                  borderColor: 'red'
+                };
+
+                var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels:{{dates|safe}},
+                    datasets: [first_stock, second_stock]
+                  },
+
+                // Configuration options go here
+                options: {}
+                });
+
+              break;
+          }
+
+      </script>
+
+{% if Num_Tickers == 1 %}
+
+    <div class="row justify-content-center" id="bollinger-button">
+      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button onclick=bollinger_bands(1) class="btn btn-primary btn-sm">Calculate Bollinger Bands</button>
+        </div>
+
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
+          <button onclick=rnn_predict(1) type="button" class="btn btn-secondary btn-sm">RNN Model Predictions</button>
+        </div>
+
+        <div class="btn-group mr-2" role="group" aria-label="Third group">
+            <button onclick=RSI_plot(1) type="button" class="btn btn-secondary btn-sm">Show RSI Plot</button>
+        </div>
+
+        <!-- Button trigger modal -->
+        <div class="btn-group mr-2" role="group" aria-label="Fourth group">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Adjust Parameters</button>
+
+        </div>
+
+      </div>
+    </div>
+
+{% else %}
+  <div class="col-md-12 text-center" id="group-button">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+      <div class="btn-group" role="group">
+        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Calculate Bollinger Bands for:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+          <a class="dropdown-item" onclick=bollinger_bands(1)>{{ticker}}</a>
+          <a class="dropdown-item" onclick=bollinger_bands(2)>{{ticker2}}</a>
+        </div>
+      </div>
+
+      <div class="btn-group" role="group">
+        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          RNN Model Predictions for:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+          <a class="dropdown-item" onclick=rnn_predict(1)>{{ticker}}</a>
+          <a class="dropdown-item" onclick=rnn_predict(2)>{{ticker2}}</a>
+        </div>
+      </div>
+
+
+      <div class="btn-group" role="group">
+        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          RSI Plot for:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+          <a class="dropdown-item" onclick=RSI_plot(1)>{{ticker}}</a>
+          <a class="dropdown-item" onclick=RSI_plot(2)>{{ticker2}}</a>
+        </div>
+      </div>
+
+
+      <!-- Button trigger modal -->
+      <div class="btn-group mr-2" role="group" aria-label="Fourth group">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Adjust Parameters</button>
+
+      </div>
+
+    </div>
+  </div>
+
+    </div>
+  </div>
+{% endif %}
+
+  <!-- Modal -->
+  <form action="{% url 'app-search'%}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Adjust Intervals and Plot New Stocks</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+              <div class="form-group">
+                  <label for="example1" class="col-form-label">Choose the period: </label>
+                <!-- <input type="text" class="form-control" id="recipient-name" name='add_stock'>-->
+                  <select name='period' class="form-control" id="exampleFormControlSelect1">
+                    <option value='1mo'>1 Month</option>
+                    <option value='3mo'>3 Month</option>
+                    <option value='6mo'>6 Month</option>
+                    <option value='1y'>1 Year</option>
+                    <option value='5y'>5 Years</option>
+                    <option value='10y'>10 Years</option>
+                    <option value='max'>Max Period</option>
+                  </select>
+                  <label for="example2" class="col-form-label">Choose the time interval between two consecutive points: </label>
+                  <select name='interval'class="form-control" id="cars">
+                    <option value='15m'>15 Min</option>
+                    <option value='30m'>30 Min</option>
+                    <option value='60m'>1 Hour</option>
+                    <option value='90m'>90 Min</option>
+                    <option value='1d'>1 Day</option>
+                    <option value='1wk'>1 Week</option>
+                    <option value='1mo'>1 Month</option>
+                  </select>
+                  <label for="recipient-name" class="col-form-label">Enter valid tickers separated by a single-space (max 2): </label>
+                  <input type="text" class="form-control" id="recipient-name" name='add_stock'>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <canvas id="test"></canvas>
+        <script>
+        switch ({{Num_Tickers}}) {
+            case 1:
+                var ctx = document.getElementById('test').getContext('2d');
+                var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels:{{dates|safe}},
+                    datasets: [{
+                        label: '{{ticker}} Volume',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: {{volume}},
+                        fill: true
+
+                      }]
+                  },
+
+                // Configuration options go here
+                options: {}
+                });
+
+              break;
+            case 2:
+                var ctx = document.getElementById('test').getContext('2d');
+                var first_stock = {
+                  label: "{{ticker}} Volume",
+                  data: {{volume}},
+                  lineTension: 0.4,
+                  fill: true,
+                  pointRadius: 0.75,
+                  borderColor: 'blue'
+                };
+
+                var second_stock = {
+                  label: "{{ticker2}} Volume",
+                  data:{{volume2}},
+                  lineTension: 0.4,
+                  fill: true,
+                  pointRadius: 0.75,
+                  borderColor: 'red'
+                };
+
+                var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels:{{dates|safe}},
+                    datasets: [first_stock, second_stock]
+                  },
+
+                // Configuration options go here
+                options: {}
+                });
+
+              break;
+          }
+        </script>
+
+        <script>
+          // if the ticker_number == 1, then it will fetch data for the only ticker
+          // if the ticker_number == 2, then it will fetch data for the second ticker
+          function rnn_predict(ticker_number) {
+
+            if (ticker_number == 1) {
+              var predictionCanvas = document.getElementById("myChart");
+              var predictions = {   // create arrays for both upper and lower bands
+                label: "Model Predictions",
+                data: {{predictions}},
+                lineTension: 0.4,
+                fill: false,
+                pointRadius: 0.75,
+              borderColor: 'orange'
+              };
+
+              var true_values = {
+                label: "{{ticker}} True Values",
+                data: {{true_values}},
+                lineTension: 0.4,
+                fill: false,
+                pointRadius: 0.75,
+                borderColor: 'blue'
+              };
+
+              var combinedData = {
+                labels: {{model_dates|safe}},
+                datasets: [predictions, true_values]
+              };
+
+              var lineChart = new Chart(predictionCanvas, {
+                type: 'line',
+                data: combinedData,
+                options: {}
+              });
+
+            console.log('hey');
+
+
+            } else {
+              var predictionCanvas = document.getElementById("myChart");
+              var predictions2 = {   // create arrays for both upper and lower bands
+                label: "Model Predictions",
+                data: {{predictions2}},
+                lineTension: 0.4,
+                fill: false,
+                pointRadius: 0.75,
+              borderColor: 'orange'
+              };
+
+              var true_values2 = {
+                label: "{{ticker2}} True Values",
+                data: {{true_values2}},
+                lineTension: 0.4,
+                fill: false,
+                pointRadius: 0.75,
+                borderColor: 'blue'
+              };
+
+              var combinedData = {
+                labels: {{model_dates2|safe}},
+                datasets: [predictions2, true_values2]
+              };
+
+              var lineChart = new Chart(predictionCanvas, {
+                type: 'line',
+                data: combinedData,
+                options: {}
+              });
+
+            console.log('second function test');
+
+
+            }
+
+          }
+
+        </script>
+
+      <script>
+        function RSI_plot(ticker_number) {
+          if (ticker_number == 1) {
+
+            var rsi_data = {{RSI_data}};
+            var line_80 = {   // create arrays for both upper and lower bands
+              label: "80 line",
+              data: create_horizontal_line(80),
+              lineTension: 1,
+              fill: false,
+              pointRadius: 0.75,
+              pointStyle: 'dash',
+            borderColor: 'blue'
+            };
+
+            var line_20 = {   // create arrays for both upper and lower bands
+              label: "20 line",
+              data: create_horizontal_line(20),
+              lineTension: 1,
+              fill: false,
+              pointRadius: 0.75,
+              pointStyle: 'dash',
+            borderColor: 'green'
+            };
+
+            var line_50 = {   // create arrays for both upper and lower bands
+              label: "20 line",
+              data: create_horizontal_line(50),
+              lineTension: 1,
+              fill: false,
+              pointRadius: 0.75,
+              pointStyle: 'dash',
+            borderColor: 'yellow'
+            };
+
+            var RSICanvas = document.getElementById("myChart");
+            var lineChart = new Chart(RSICanvas, {
+                type: 'line',
+                data: {
+                  labels:{{RSI_dates|safe}},
+                    datasets: [{
+                        label: '{{ticker}} RSI Plot ',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        pointRadius: 0.1,
+                        data: rsi_data,
+                        fill: false
+                    }, line_80, line_20, line_50]
+                },
+                options: {}
+          });
+
+            var adjusted_close_rsi = {{RSI_adj}};
+            var AdjCanvas = document.getElementById("test");
+            var lineChart2 = new Chart(AdjCanvas, {
+                type: 'line',
+                data: {
+                  labels:{{RSI_dates|safe}},
+                    datasets: [{
+                        label: '{{ticker}} Adjusted Close Plot with RSI Indices',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: adjusted_close_rsi,
+                        fill: false
+                    }]
+                },
+                options: {}
+
+            });
+
+          } else {
+                var rsi_data2 = {{RSI_data2}}
+                var line_80 = {   // create arrays for both upper and lower bands
+                  label: "80 line",
+                  data: create_horizontal_line(80),
+                  lineTension: 1,
+                  fill: false,
+                  pointRadius: 0.75,
+                  pointStyle: 'dash',
+                borderColor: 'blue'
+                };
+
+                var line_20 = {   // create arrays for both upper and lower bands
+                  label: "20 line",
+                  data: create_horizontal_line(20),
+                  lineTension: 1,
+                  fill: false,
+                  pointRadius: 0.75,
+                  pointStyle: 'dash',
+                borderColor: 'green'
+                };
+
+                var line_50 = {   // create arrays for both upper and lower bands
+                  label: "20 line",
+                  data: create_horizontal_line(50),
+                  lineTension: 1,
+                  fill: false,
+                  pointRadius: 0.75,
+                  pointStyle: 'dash',
+                borderColor: 'yellow'
+                };
+
+                var RSICanvas = document.getElementById("myChart");
+                var lineChart = new Chart(RSICanvas, {
+                    type: 'line',
+                    data: {
+                      labels:{{RSI_dates2|safe}},
+                        datasets: [{
+                            label: '{{ticker2}} RSI Plot ',
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            pointRadius: 0.1,
+                            data: rsi_data2,
+                            fill: false
+                        }, line_80, line_20, line_50]
+                    },
+                    options: {}
+              });
+
+                var adjusted_close_rsi2 = {{RSI_adj2}};
+                var AdjCanvas = document.getElementById("test");
+                var lineChart2 = new Chart(AdjCanvas, {
+                    type: 'line',
+                    data: {
+                      labels:{{RSI_dates2|safe}},
+                        datasets: [{
+                            label: '{{ticker2}} Adjusted Close Plot with RSI Indices',
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: adjusted_close_rsi2,
+                            fill: false
+                        }]
+                    },
+                    options: {}
+
+                });
+
+          }
+
+        }
+      </script>
+
+
+      <script>
+        // used for RSI
+        function create_horizontal_line(num) {
+          var horizontal_data = [];
+
+          for (var i = 0; i < {{RSI_data}}.length; i++) {
+            horizontal_data.push(num);
+          }
+
+        return horizontal_data
+        }
+      </script>
+
+
+      <script>
+        function bollinger_bands(ticker_number) {
+          if (ticker_number == 1) {
+            var moving_avg = [];
+            var std_dev_upper = [];
+            var std_dev_lower = [];
+            const len = {{length}};
+            const gap = 30;  // rolling average every 30 days
+
+            for (var i = 0; i < len; i++) {
+              avg = mean({{adjusted_close}}.slice(i,i + gap));
+              moving_avg.push(avg);
+              std_dev_upper.push(avg + 2*stdev({{adjusted_close}}.slice(i, i + gap)));
+              std_dev_lower.push(avg - 2*stdev({{adjusted_close}}.slice(i, i + gap)));
+            }
+
+
+            var bollingerCanvas = document.getElementById("myChart");
+
+            var upper_band = {   // create arrays for both upper and lower bands
+              label: "Upper Band",
+              data: std_dev_upper,
+              lineTension: 0.4,
+              fill: false,
+              pointRadius: 0.75,
+            borderColor: 'green'
+            };
+
+            var lower_band = {
+              label: 'Lower Band',
+              data: std_dev_lower,
+              lineTension: 0.4,
+              fill: false,
+              pointRadius: 0.75,
+              borderColor: 'blue'
+            };
+
+
+            var original_data = {   // original data array
+              label: '{{ticker}}',
+              data: {{adjusted_close}},
+              lineTension: 0.4,
+              fill: false,
+              borderColor: 'red'
+            };
+
+            var combinedData = {
+              labels: {{dates|safe}},
+              datasets: [lower_band, upper_band, original_data]
+            };
+
+            var lineChart = new Chart(bollingerCanvas, {
+              type: 'line',
+              data: combinedData,
+              options: {}
+            });
+
+            //const temp = myChart.getContext('2d');
+            //temp.clearRect(0,0,myChart.width, myChart.height);
+            console.log('hi');
+
+
+          } else {
+            var moving_avg = [];
+            var std_dev_upper = [];
+            var std_dev_lower = [];
+            const len = {{length2}};
+            const gap = 30;  // rolling average every 30 days
+
+            for (var i = 0; i < len; i++) {
+              avg = mean({{adjusted_close2}}.slice(i,i + gap));
+              moving_avg.push(avg);
+              std_dev_upper.push(avg + 2*stdev({{adjusted_close2}}.slice(i, i + gap)));
+              std_dev_lower.push(avg - 2*stdev({{adjusted_close2}}.slice(i, i + gap)));
+            }
+
+
+            var bollingerCanvas = document.getElementById("myChart");
+
+            var upper_band = {   // create arrays for both upper and lower bands
+              label: "Upper Band",
+              data: std_dev_upper,
+              lineTension: 0.4,
+              fill: false,
+              pointRadius: 0.75,
+            borderColor: 'green'
+            };
+
+            var lower_band = {
+              label: 'Lower Band',
+              data: std_dev_lower,
+              lineTension: 0.4,
+              fill: false,
+              pointRadius: 0.75,
+              borderColor: 'blue'
+            };
+
+
+            var original_data = {   // original data array
+              label: '{{ticker2}}',
+              data: {{adjusted_close2}},
+              lineTension: 0.4,
+              fill: false,
+              borderColor: 'red'
+            };
+
+            var combinedData = {
+              labels: {{dates2|safe}},
+              datasets: [lower_band, upper_band, original_data]
+            };
+
+            var lineChart = new Chart(bollingerCanvas, {
+              type: 'line',
+              data: combinedData,
+              options: {}
+            });
+
+            //const temp = myChart.getContext('2d');
+            //temp.clearRect(0,0,myChart.width, myChart.height);
+            console.log('second bollinger');
+
+
+          }
+
+        }
+
+      </script>
+
+       <script>
+        function mean(arr) {
+          var sum = 0;
+          var len = arr.length;
+          for (var i = 0; i < arr.length; i++) {
+            sum += arr[i];
+          }
+          return sum/len
+        }
+        </script>
+
+
+        <script>
+         function stdev(arr) {
+           avg = mean(arr);
+           //variance
+           squaredDifferences = arr.map(function(val){
+
+             difference = val - avg;
+             square_diff = difference*difference;
+             return square_diff
+           });
+
+           variance = mean(squaredDifferences);
+           std = Math.sqrt(variance);
+
+           return std
+         }
+         </script>
+
+
+
+{% endblock content %}
