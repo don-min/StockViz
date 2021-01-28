@@ -1,6 +1,6 @@
 Django
 numpy
-tensorflow
+tensorflow==2.0
 sklearn
 yfinance
 bs4
