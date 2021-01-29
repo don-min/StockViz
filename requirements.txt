@@ -5,6 +5,6 @@ sklearn
 yfinance
 bs4
 requests
-gunicorn
+gunicorn==20.0.4
 whitenoise
 django-heroku
