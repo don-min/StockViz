@@ -16,5 +16,6 @@ The entire list of required libraries can be viewed in **requirements.txt**
    * Stock market API that allows users to call various features (adj_close, volume, close, etc.) of stocks; converts the data into a pandas dataframe
 
 
+Deployed on Heroku.
 
-
+Link: https://stockviz-123.herokuapp.com/
