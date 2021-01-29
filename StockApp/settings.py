@@ -27,7 +27,7 @@ SECRET_KEY = '1_*hcgv3$vaiw^y9)7y5f9f&uv$(v$fpdz-=g+70!qw2_kiu$='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://stockviz-16155.herokuapp.com/', '127.0.0.1', '99.237.165.93', '.herokuapp.com']
+ALLOWED_HOSTS = ['https://stockviz-16155.herokuapp.com/', '127.0.0.1', '.herokuapp.com']
 
 
 # Application definition
@@ -44,13 +44,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'StockApp.urls'
