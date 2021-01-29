@@ -1,10 +1,9 @@
 Django
 numpy
-tensorflow==1.15
+tensorflow==2.2
 sklearn
 yfinance
 bs4
-requests
 gunicorn==20.0.4
 whitenoise
 django-heroku==0.3.1
