@@ -27,7 +27,7 @@ SECRET_KEY = '1_*hcgv3$vaiw^y9)7y5f9f&uv$(v$fpdz-=g+70!qw2_kiu$='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['stockviz-16155.herokuapp.com', '127.0.0.1', '99.237.165.93', '.herokuapp.com']
+ALLOWED_HOSTS = ['https://stockviz-16155.herokuapp.com/', '127.0.0.1', '99.237.165.93', '.herokuapp.com']
 
 
 # Application definition
