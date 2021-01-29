@@ -11,9 +11,10 @@ import yfinance as yf
 
 
 # Machine Learning libraries
-import tensorflow as tf
+from keras.layers import *
+from keras.models import load_model
+
 from sklearn.preprocessing import MinMaxScaler, normalize
-from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 from .saved_model.my_model import *
 from .marketwatch_webscrape import scrape
