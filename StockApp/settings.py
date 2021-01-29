@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-import django_heroku
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '1_*hcgv3$vaiw^y9)7y5f9f&uv$(v$fpdz-=g+70!qw2_kiu$='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['https://stockviz-123.herokuapp.com/', '127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['https://stockviz-123.herokuapp.com/', '127.0.0.1', '.herokuapp.com', 'localhost']
 
 
 # Application definition
@@ -127,5 +127,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'Visualizer/static')
 ]
-
-django_heroku.settings(locals())

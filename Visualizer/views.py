@@ -11,8 +11,9 @@ import yfinance as yf
 
 
 # Machine Learning libraries
-from keras.layers import *
-from keras.models import load_model
+import tensorflow as tf
+from tensorflow.keras.layers import *
+from tensorflow.keras.models import load_model
 
 from sklearn.preprocessing import MinMaxScaler, normalize
 from sklearn.preprocessing import MinMaxScaler

@@ -1,9 +1,9 @@
 Django
 numpy
-keras==2.2.4
+tensorflow-cpu
 sklearn
 yfinance
 bs4
 gunicorn==20.0.4
 whitenoise
-django-heroku==0.3.1
+
