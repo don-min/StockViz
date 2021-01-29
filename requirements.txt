@@ -7,4 +7,4 @@ bs4
 requests
 gunicorn==20.0.4
 whitenoise
-django-heroku
+django-heroku==0.3.1
