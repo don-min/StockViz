@@ -3,6 +3,10 @@ A Django web application that allows users to visualize and analyze stock data. 
 (**Bollinger Bands** and **RSI Plots**) to determine market trends.
 
 
+# Contributors:
+Shahriyar Habib & Don Min
+
+
 # Libraries
 The entire list of required libraries can be viewed in **requirements.txt**
 
