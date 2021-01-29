@@ -1,4 +1,4 @@
-# StockViz
+# StockViz : https://stockviz-123.herokuapp.com/
 A Django web application that allows users to visualize and analyze stock data. Users can interact with graphs, compare stocks against each other and use various technical indicators
 (**Bollinger Bands** and **RSI Plots**) to determine market trends.
 
@@ -17,5 +17,3 @@ The entire list of required libraries can be viewed in **requirements.txt**
 
 
 Deployed on Heroku.
-
-Link: https://stockviz-123.herokuapp.com/
