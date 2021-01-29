@@ -1,2 +1,2 @@
 web: gunicorn StockApp.wsgi --log-file -
-heroku ps:scale web=2 worker=4
+heroku config:set WEB_CONCURRENCY=1
