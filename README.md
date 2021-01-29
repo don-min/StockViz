@@ -5,6 +5,7 @@ A Django web application that allows users to visualize and analyze stock data. 
 
 # Contributors:
 *Shahriyar Habib* 
+
 *Don Min*
 
 
