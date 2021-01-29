@@ -24,7 +24,7 @@ PATH = "Visualizer//saved_model//my_model"
 stock_model = load_model(PATH) # Load model
 
 
-## HELPER FUNCTIONS ##
+## HELPER FUNCTIONS ## (USED TO CLEAN AND PREPARE DATA)
 
 def clean_data(tickers, period, interval):
 
